@@ -1,5 +1,4 @@
 from math import factorial
-from itertools import permutations
 f = open('input.txt')
 data = f.readlines()
 partOne = False
@@ -39,16 +38,12 @@ def countOptionalAdapters(input):
     startNum = 0
     for i in input:
         index = input.index(i)
-        if i == input[0]:
-            before = 0
-        else:
+        before = 0
+        if i != input[0]:
             before = input[index - 1]
-        if i == input[-1]:
-            after = i+3
-        else:
-            after = input[index+1]
-        if i == 48:
-            x=3
+        after = i + 3
+        if i != input[-1]:
+            after = input[index + 1]
         if (before + 3 == i) or (after - 3 == i) or (i == input[-1]): #Case for when it is essential
             if previousOptional== True: #End of a chain
                 dictOptional.update({keys:{'consecutive':con,'Total Gap':i-startNum}})
@@ -79,22 +74,15 @@ def calcPermute(dict):
     allSegments = []
     for key in dict.keys():
         data = dict[key]
-        minimumInGap = int((data['Total Gap']-1)/3)
-        if data['Total Gap']%3 == 0:
-            shortest = True
-        else:
-            shortest = False
+        minimumInGap = int((data['Total Gap'])/3)
         sum = 0
         for i in range(data['consecutive']+1):
-            if i > minimumInGap:
+            if i >= minimumInGap:
                 sum+=nCr(data['consecutive'],i)
-        if shortest:
+        if data['Total Gap'] % 3 == 0:
             sum+=1
-        else:
-            sum+=data['consecutive']
         allSegments.append(sum)
     totalSum = 1
-    print(allSegments)
     for i in allSegments:
         totalSum*=i
     return totalSum
@@ -110,9 +98,7 @@ if partOne:
 if not partOne:
     newData = parseDataList(data)
     newData.sort()
-    print(newData)
     optional = countOptionalAdapters(newData)
-    visualizeDictionary(optional)
     count = calcPermute(optional)
     print(count)
 
