@@ -1,6 +1,6 @@
 import re
 
-f = open('sample.txt')
+f = open('input.txt')
 text = f.read()
 
 patternSpecifications = re.compile(': (\d+)-(\d+) or (\d+)-(\d+)')
@@ -8,23 +8,43 @@ values = re.compile('nearby tickets:((\n.*)+)')
 
 valueNum = values.findall(text)
 valueNum = list(sum(valueNum, ()))
+valueNum = valueNum[:-1]
 
 matches = patternSpecifications.findall(text)
 matches = list(sum(matches, ()))
 matches = [int(x) for x in matches]
-upper = [i for i in range(len(matches)) if i % 2 == 1]
-lower = [i for i in range(len(matches)) if i % 2 == 0]
+upper = [matches[i] for i in range(len(matches)) if i % 2 == 1]
+lower = [matches[i] for i in range(len(matches)) if i % 2 == 0]
 
-def isInRange(num):
-    index = 0
-    for fill in lower:
-        l = lower[index]
-        u = upper[index]
-        if num < lower or num > u:
-            return False
-    return True
+temp = ""
+for x in valueNum:
+    temp += x
+resultString = re.findall("(\d+)", temp)
+finalString = []
+for x in resultString:
+    finalString.append(int(x))
 
-print(valueNum)
+def findAllOutOfRange():
+    outOfRange = []
+    for num in finalString:
+        index = 0
+        foundMatch = False
+        for i in lower:
+            lowerNum = i
+            upperNum = upper[index]
+            if (lowerNum <= num and num <= upperNum):
+                foundMatch = True
+                break
+            else:
+                index+=1
+        if not foundMatch:
+            outOfRange.append(num)
+    sum = 0
+    for x in outOfRange:
+        sum += x
+    return sum
+
+print(findAllOutOfRange())
 
 
 
